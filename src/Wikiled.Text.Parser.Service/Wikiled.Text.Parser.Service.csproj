@@ -17,11 +17,12 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="Wikiled.Server.Core" Version="1.2.0" />
     <PackageReference Include="Wikiled.Common" Version="1.1.0" />
+    <PackageReference Include="Wikiled.Text.Parser" Version="1.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <ProjectReference Include="..\Wikiled.Text.Parser\Wikiled.Text.Parser.csproj" />
-  </ItemGroup>
+  </ItemGroup>-->
   <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
