@@ -39,6 +39,11 @@
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)Wikiled.Text.Parser.dll" />
       <BuildOutputInPackage Include="$(OutputPath)Wikiled.Text.Parser.pdb" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.RichEdit.v18.1.Core.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.Pdf.v18.1.Drawing.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.Pdf.v18.1.Core.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.Docs.v18.1.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.Data.v18.1.dll" />
     </ItemGroup>
   </Target>
 
