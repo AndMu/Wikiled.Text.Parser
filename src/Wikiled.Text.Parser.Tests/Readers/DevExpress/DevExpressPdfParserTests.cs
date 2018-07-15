@@ -31,7 +31,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         {
             var result = instance.Parse();
             Assert.IsNotNull(result);
-            Assert.AreEqual(23330, result.Length);
+            Assert.AreEqual(23539, result.Length);
         }
     }
 }
