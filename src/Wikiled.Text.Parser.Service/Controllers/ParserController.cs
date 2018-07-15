@@ -51,6 +51,7 @@ namespace Wikiled.Text.Parser.Service.Controllers
         [Route("processfile")]
         public ActionResult<string> ProcessFile(IFormFile file)
         {
+            logger.LogInformation("Processing File: {0}", resolve.GetRequestIp());
             if (file.Length > 0)
             {
                 string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Value;
