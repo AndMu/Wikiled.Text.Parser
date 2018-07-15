@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+      <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>    
+    <PackageReference Include="Moq" Version="4.9.0" />
+    <PackageReference Include="NLog" version="4.5.6" />
+    <PackageReference Include="NUnit" version="3.10.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wikiled.Text.Parser\Wikiled.Text.Parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\HowTo.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+</Project>
