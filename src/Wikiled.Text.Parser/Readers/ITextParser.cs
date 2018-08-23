@@ -1,7 +1,9 @@
-﻿namespace Wikiled.Text.Parser.Readers
+﻿using Wikiled.Text.Parser.Result;
+
+namespace Wikiled.Text.Parser.Readers
 {
     public interface ITextParser
     {
-        string Parse();
+        DocumentResult Parse();
     }
 }

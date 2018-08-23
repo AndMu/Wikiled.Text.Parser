@@ -24,6 +24,9 @@
     <Reference Include="DevExpress.Docs.v18.1">
       <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Docs.v18.1.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Office.v18.1.Core">
+      <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Office.v18.1.Core.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Pdf.v18.1.Core">
       <HintPath>C:\Program Files (x86)\DevExpress 18.1\Components\Bin\Framework\DevExpress.Pdf.v18.1.Core.dll</HintPath>
     </Reference>
@@ -44,6 +47,7 @@
       <BuildOutputInPackage Include="$(OutputPath)DevExpress.Pdf.v18.1.Core.dll" />
       <BuildOutputInPackage Include="$(OutputPath)DevExpress.Docs.v18.1.dll" />
       <BuildOutputInPackage Include="$(OutputPath)DevExpress.Data.v18.1.dll" />
+      <BuildOutputInPackage Include="$(OutputPath)DevExpress.Office.v18.1.Core.dll" />
     </ItemGroup>
   </Target>
 

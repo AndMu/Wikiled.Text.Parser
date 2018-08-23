@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using DevExpress.Pdf;
+using Wikiled.Text.Parser.Result;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
 {
@@ -22,25 +23,24 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             this.file = file ?? throw new ArgumentNullException(nameof(file));
         }
 
-        public string Parse()
+        public DocumentResult Parse()
         {
-            StringBuilder builder = new StringBuilder();
+            DocumentResult document = new DocumentResult();
             using (PdfDocumentProcessor documentProcessor = new PdfDocumentProcessor())
             {
                 documentProcessor.LoadDocument(file.FullName);
                 int pages = maxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : maxPages;
+                document.Pages = new PageItem[pages];
                 for (int i = 1; i <= pages; i++)
                 {
-                    if (i > 1)
-                    {
-                        builder.Append(" ");
-                    }
-
-                    builder.Append(documentProcessor.GetPageText(i));
+                    PageItem page = new PageItem();
+                    page.Blocks = new[] {new TextBlockItem()};
+                    page.Blocks[0].Text = documentProcessor.GetPageText(i);
+                    document.Pages[i - 1] = page;
                 }
             }
 
-            return builder.ToString();
+            return document;
         }
     }
 }

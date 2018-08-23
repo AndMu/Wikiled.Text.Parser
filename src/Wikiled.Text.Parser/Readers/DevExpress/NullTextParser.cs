@@ -1,4 +1,6 @@
-﻿namespace Wikiled.Text.Parser.Readers.DevExpress
+﻿using Wikiled.Text.Parser.Result;
+
+namespace Wikiled.Text.Parser.Readers.DevExpress
 {
     public class NullTextParser : ITextParser
     {
@@ -7,9 +9,12 @@
 
         public static NullTextParser Instance { get; } = new NullTextParser();
 
-        public string Parse()
+        public DocumentResult Parse()
         {
-            return string.Empty;
+            return new DocumentResult
+                   {
+                       Pages = new PageItem[0]
+                   };
         }
     }
 }
