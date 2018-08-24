@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraRichEdit.API.Native;
-using Wikiled.Text.Parser.Result;
+using Wikiled.Text.Analysis.Structure.Raw;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
 {
     public class DocumentVisitor : DocumentVisitorBase
     {
-        private CurrentLayoutVisitor layoutVisitor;
+        private readonly CurrentLayoutVisitor layoutVisitor;
 
-        private readonly List<PageItem> pages = new List<PageItem>();
+        private readonly List<RawPage> pages = new List<RawPage>();
 
         private readonly List<TrackingBlockItem> blocks = new List<TrackingBlockItem>();
 
-        private PageItem activePage;
+        private RawPage activePage;
 
         private TrackingBlockItem activeBlock;
 
@@ -24,10 +24,10 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             VisitPage();
         }
 
-        public DocumentResult GenerateResult()
+        public RawDocument GenerateResult()
         {
             ExtractBlocks();
-            var result = new DocumentResult();
+            var result = new RawDocument();
             result.Pages = pages.ToArray();
             return result;
         }
@@ -36,7 +36,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
         {
             ExtractBlocks();
             blocks.Clear();
-            activePage = new PageItem();
+            activePage = new RawPage();
             pages.Add(activePage);
         }
 

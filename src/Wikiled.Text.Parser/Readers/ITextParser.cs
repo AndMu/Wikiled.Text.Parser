@@ -1,9 +1,10 @@
-﻿using Wikiled.Text.Parser.Result;
+﻿using System.Threading.Tasks;
+using Wikiled.Text.Analysis.Structure.Raw;
 
 namespace Wikiled.Text.Parser.Readers
 {
     public interface ITextParser
     {
-        DocumentResult Parse();
+        Task<RawDocument> Parse();
     }
 }
