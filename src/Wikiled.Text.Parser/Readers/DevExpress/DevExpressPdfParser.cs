@@ -35,7 +35,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                 {
                     var page = new RawPage();
                     page.Blocks = new[] {new TextBlockItem()};
-                    page.Blocks[0].Text = documentProcessor.GetPageText(i).Replace("\r\n", " ");
+                    page.Blocks[0].Text = documentProcessor.GetPageText(i).Replace(Environment.NewLine, " ");
                     document.Pages[i - 1] = page;
                 }
             }
