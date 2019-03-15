@@ -24,7 +24,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             {
                 documentProcessor.LayoutCalculationMode = CalculationModeType.Automatic;
                 documentProcessor.LayoutUnit = DocumentLayoutUnit.Document;
-                Section vSection = documentProcessor.Document.Sections[0];
+                var vSection = documentProcessor.Document.Sections[0];
 
                 //vSection.Page.Landscape = false;
                 //vSection.Page.PaperKind = System.Drawing.Printing.PaperKind.A4;
@@ -42,11 +42,11 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                 documentProcessor.LoadDocument(file.FullName);
                 await loaded;
                 
-                DocumentIterator iterator = new DocumentIterator(documentProcessor.Document);
+                var iterator = new DocumentIterator(documentProcessor.Document);
                 var pageLayout = new CurrentLayoutVisitor();
-                DocumentVisitor visitor = new DocumentVisitor(pageLayout);
+                var visitor = new DocumentVisitor(pageLayout);
                 
-                LayoutIterator layoutIterator = new LayoutIterator(documentProcessor.DocumentLayout);
+                var layoutIterator = new LayoutIterator(documentProcessor.DocumentLayout);
                 while (layoutIterator.MoveNext(LayoutLevel.Page))
                 {
                     layoutIterator.Current.Accept(pageLayout);

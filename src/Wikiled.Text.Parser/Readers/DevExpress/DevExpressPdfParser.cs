@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DevExpress.Pdf;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using DevExpress.Pdf;
 using Wikiled.Text.Analysis.Structure.Raw;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
@@ -25,16 +25,19 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
         public Task<RawDocument> Parse()
         {
-            RawDocument document = new RawDocument();
-            using (PdfDocumentProcessor documentProcessor = new PdfDocumentProcessor())
+            var document = new RawDocument();
+            using (var documentProcessor = new PdfDocumentProcessor())
             {
-                documentProcessor.LoadDocument(file.FullName);                
-                int pages = maxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : maxPages;
+                documentProcessor.LoadDocument(file.FullName);
+                var pages = maxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : maxPages;
                 document.Pages = new RawPage[pages];
-                for (int i = 1; i <= pages; i++)
+                for (var i = 1; i <= pages; i++)
                 {
-                    var page = new RawPage();
-                    page.Blocks = new[] {new TextBlockItem()};
+                    var page = new RawPage
+                    {
+                        Blocks = new[] { new TextBlockItem() }
+                    };
+
                     page.Blocks[0].Text = documentProcessor.GetPageText(i).Replace(Environment.NewLine, " ");
                     document.Pages[i - 1] = page;
                 }

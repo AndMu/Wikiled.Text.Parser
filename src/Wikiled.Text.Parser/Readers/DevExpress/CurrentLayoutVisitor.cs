@@ -15,7 +15,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
         public int GetPage(int position)
         {
-            for (int i = 0; i < startPositions.Count; i++)
+            for (var i = 0; i < startPositions.Count; i++)
             {
                 if (startPositions[i] > position)
                 {

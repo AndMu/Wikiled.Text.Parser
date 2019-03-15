@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.9.0" />
-    <PackageReference Include="NLog" version="4.5.8" />
-    <PackageReference Include="NUnit" version="3.10.1" />
-    <packagereference Include="Microsoft.NET.Test.Sdk" Version="15.8.0"></packagereference>
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
-    <packagereference Include="NUnit3TestAdapter" Version="3.10.0" />
-    <PackageReference Include="Wikiled.Text.Analysis" Version="1.6.23" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+    <PackageReference Include="NLog" version="4.5.11" />
+    <PackageReference Include="NUnit" version="3.11.0" />
+    <packagereference Include="Microsoft.NET.Test.Sdk" Version="16.0.1"></packagereference>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+    <packagereference Include="NUnit3TestAdapter" Version="3.13.0" />
+    <PackageReference Include="Wikiled.Text.Analysis" Version="1.7.11" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +24,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\HowTo.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\non.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
