@@ -7,7 +7,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
     {
         private readonly int maxPages;
 
-        public DevExpressParserFactory(int maxPages=100)
+        public DevExpressParserFactory(int maxPages = 100)
         {
             if (maxPages <= 0)
             {
@@ -32,9 +32,9 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             }
 
             if (string.Compare(file.Extension, ".doc", StringComparison.OrdinalIgnoreCase) == 0 ||
-               string.Compare(file.Extension, ".docx", StringComparison.OrdinalIgnoreCase) == 0 ||
-               string.Compare(file.Extension, ".rtf", StringComparison.OrdinalIgnoreCase) == 0 ||
-               string.Compare(file.Extension, ".txt", StringComparison.OrdinalIgnoreCase) == 0)
+                string.Compare(file.Extension, ".docx", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(file.Extension, ".rtf", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(file.Extension, ".txt", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return new RichDocumentParser(file);
             }
