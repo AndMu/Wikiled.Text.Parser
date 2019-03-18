@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Wikiled.Text.Analysis.Structure.Raw;
+using Wikiled.Text.Parser.Data;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
 {
@@ -10,12 +12,12 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
         public static NullTextParser Instance { get; } = new NullTextParser();
 
-        public Task<RawDocument> Parse()
+        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
         {
-            return Task.FromResult(new RawDocument
-            {
-                Pages = new RawPage[0]
-            });
+            return Task.FromResult(
+                new ParsingResult(
+                    new RawDocument { Pages = new RawPage[0] },
+                    ParsingType.Failed));
         }
     }
 }

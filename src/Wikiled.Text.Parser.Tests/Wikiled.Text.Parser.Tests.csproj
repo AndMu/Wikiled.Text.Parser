@@ -13,6 +13,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
     <packagereference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="Wikiled.Text.Analysis" Version="1.7.11" />
+    <PackageReference Include="Tesseract" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\non.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\phototest.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\phototest.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\phototest.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\phototest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\phototest.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

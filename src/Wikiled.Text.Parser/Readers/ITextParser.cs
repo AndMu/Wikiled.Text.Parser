@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
-using Wikiled.Text.Analysis.Structure.Raw;
+﻿using System.IO;
+using System.Threading.Tasks;
+using Wikiled.Text.Parser.Data;
 
 namespace Wikiled.Text.Parser.Readers
 {
     public interface ITextParser
     {
-        Task<RawDocument> Parse();
+        Task<ParsingResult> Parse(FileInfo file, int maxPages);
     }
 }

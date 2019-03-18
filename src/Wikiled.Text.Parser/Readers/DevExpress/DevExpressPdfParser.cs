@@ -2,30 +2,36 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Wikiled.Text.Analysis.Structure.Raw;
+using Wikiled.Text.Parser.Data;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
 {
     public class DevExpressPdfParser : ITextParser
     {
-        private readonly int maxPages;
+        private readonly ILogger<DevExpressPdfParser> logger;
 
-        private readonly FileInfo file;
-
-        public DevExpressPdfParser(FileInfo file, int maxPages)
+        public DevExpressPdfParser(ILogger<DevExpressPdfParser> logger)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
             if (maxPages <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(maxPages));
             }
 
-            this.maxPages = maxPages;
-            this.file = file ?? throw new ArgumentNullException(nameof(file));
-        }
-
-        public Task<RawDocument> Parse()
-        {
+            logger.LogDebug("Parsing [{0}]", file.FullName);
             var document = new RawDocument();
+            bool containsText = false;
             using (var documentProcessor = new PdfDocumentProcessor())
             {
                 documentProcessor.LoadDocument(file.FullName);
@@ -39,11 +45,22 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                     };
 
                     page.Blocks[0].Text = documentProcessor.GetPageText(i).Replace(Environment.NewLine, " ");
+                    if (!string.IsNullOrWhiteSpace(page.Blocks[0].Text))
+                    {
+                        containsText = true;
+                    }
+
                     document.Pages[i - 1] = page;
                 }
             }
 
-            return Task.FromResult(document);
+            if (!containsText)
+            {
+                logger.LogInformation("Failed to find text in: [{0}]", file.FullName);
+                return Task.FromResult(ParsingResult.Error);
+            }
+
+            return Task.FromResult(new ParsingResult(document, ParsingType.Extract));
         }
     }
 }

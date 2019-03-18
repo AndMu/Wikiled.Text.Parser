@@ -3,6 +3,8 @@ using Moq;
 using NUnit.Framework;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
+using Wikiled.Text.Parser.Data;
 using Wikiled.Text.Parser.Ocr;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
@@ -12,9 +14,10 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
     public class DevExpressOcrParserTests
     {
         private IOcrImageParser ocrImageParser;
+
         private FileInfo fileInfo;
 
-        private DevExpressOcrParser instance;
+        private DevExpressPdfOcrParser instance;
 
         [SetUp]
         public void SetUp()
@@ -24,34 +27,25 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
             instance = CreateDevExpressOcrParser();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            ocrImageParser.Dispose();
-        }
-
         [Test]
         public void Construct()
         {
-            Assert.Throws<ArgumentNullException>(() => new DevExpressOcrParser(
-                ocrImageParser,
-                fileInfo,
-                10));
+            Assert.Throws<ArgumentNullException>(() => new DevExpressPdfOcrParser(new NullLogger<DevExpressPdfOcrParser>(), null));
+            Assert.Throws<ArgumentNullException>(() => new DevExpressPdfOcrParser(null, ocrImageParser));
         }
 
         [Test]
         public async Task Parse()
         {
-            var text = await instance.Parse().ConfigureAwait(false);
-            Assert.AreEqual(10, text.Pages);
+            var result = await instance.Parse(fileInfo, 10).ConfigureAwait(false);
+            Assert.AreEqual(ParsingType.OCR, result.Type);
+            Assert.AreEqual(10, result.Document.Pages.Length);
+            Assert.Greater(result.Document.Pages[0].Blocks[0].Text.Length, 10);
         }
 
-        private DevExpressOcrParser CreateDevExpressOcrParser()
+        private DevExpressPdfOcrParser CreateDevExpressOcrParser()
         {
-            return new DevExpressOcrParser(
-                ocrImageParser,
-                fileInfo,
-                10);
+            return new DevExpressPdfOcrParser(new NullLogger<DevExpressPdfOcrParser>(),  ocrImageParser);
         }
     }
 }

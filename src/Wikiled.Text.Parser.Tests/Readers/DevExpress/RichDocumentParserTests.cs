@@ -3,6 +3,8 @@ using Moq;
 using NUnit.Framework;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -18,7 +20,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         public void Setup()
         {
             file = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, @".\Data\dbs.doc"));
-            instance = new RichDocumentParser(file);
+            instance = new RichDocumentParser(new NullLogger<RichDocumentParser>());
         }
 
         [Test]
@@ -30,10 +32,10 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public async Task Parse()
         {
-            var result = await instance.Parse().ConfigureAwait(false);
+            var result = await instance.Parse(file, 10).ConfigureAwait(false);
             Assert.IsNotNull(result);
-            Assert.AreEqual(11, result.Pages.Length);
-            Assert.AreEqual(56, result.Pages[0].Blocks[0].Text.Length);
+            Assert.AreEqual(10, result.Document.Pages.Length);
+            Assert.AreEqual(56, result.Document.Pages[0].Blocks[0].Text.Length);
         }
     }
 }

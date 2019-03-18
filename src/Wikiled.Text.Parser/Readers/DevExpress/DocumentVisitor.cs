@@ -24,11 +24,11 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             VisitPage();
         }
 
-        public RawDocument GenerateResult()
+        public RawDocument GenerateResult(int maxPages)
         {
             ExtractBlocks();
             var result = new RawDocument();
-            result.Pages = pages.ToArray();
+            result.Pages = pages.Take(maxPages).ToArray();
             return result;
         }
 
