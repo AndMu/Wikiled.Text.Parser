@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Wikiled.Text.Parser.Data;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -13,9 +16,12 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
 
         private FileInfo fileOcr;
 
+        private DevExpressPdfParser instance;
+
         [SetUp]
         public void Setup()
         {
+            instance = Create();
             fileHowTo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, @".\Data\HowTo.pdf"));
             fileOcr = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, @".\Data\non.pdf"));
         }
@@ -23,28 +29,30 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public void Construct()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new DevExpressPdfParser(fileHowTo, 0));
-            Assert.Throws<ArgumentNullException>(() => new DevExpressPdfParser(null, 10));
+            Assert.Throws<ArgumentNullException>(() => new DevExpressPdfParser(null));
         }
 
         [Test]
         public async Task Parse()
         {
-            var instance = new DevExpressPdfParser(fileHowTo, 10);
-            var result = await instance.Parse().ConfigureAwait(false);
+            var result = await instance.Parse(fileHowTo, 10).ConfigureAwait(false);
             Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.Pages.Length);
-            Assert.AreEqual(6004, result.Pages[0].Blocks[0].Text.Length);
+            Assert.AreEqual(5, result.Document.Pages.Length);
+            Assert.AreEqual(6004, result.Document.Pages[0].Blocks[0].Text.Length);
         }
 
         [Test]
         public async Task ParseUnreadable()
         {
-            var instance = new DevExpressPdfParser(fileOcr, 10);
-            var result = await instance.Parse().ConfigureAwait(false);
+            var result = await instance.Parse(fileOcr, 10).ConfigureAwait(false);
             Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.Pages.Length);
-            Assert.AreEqual(6004, result.Pages[0].Blocks[0].Text.Length);
+            Assert.AreEqual(0, result.Document.Pages.Length);
+            Assert.AreEqual(ParsingType.Failed, result.Type);
+        }
+
+        private DevExpressPdfParser Create()
+        {
+            return new DevExpressPdfParser(new NullLogger<DevExpressPdfParser>());
         }
     }
 }

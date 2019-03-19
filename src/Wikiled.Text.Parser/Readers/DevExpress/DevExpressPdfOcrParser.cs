@@ -1,36 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DevExpress.Pdf;
+using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using DevExpress.Pdf;
+using Microsoft.Extensions.Logging;
 using Wikiled.Text.Analysis.Structure.Raw;
+using Wikiled.Text.Parser.Data;
 using Wikiled.Text.Parser.Ocr;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
 {
-    public class DevExpressOcrParser : ITextParser
+    public class DevExpressPdfOcrParser : ITextParser
     {
-        private readonly int maxPages;
-
-        private readonly FileInfo file;
+        private readonly ILogger<DevExpressPdfOcrParser> logger;
 
         private readonly IOcrImageParser ocrImageParser;
 
-        public DevExpressOcrParser(IOcrImageParser ocrImageParser, FileInfo file, int maxPages)
+        public DevExpressPdfOcrParser(ILogger<DevExpressPdfOcrParser> logger, IOcrImageParser ocrImageParser)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.ocrImageParser = ocrImageParser ?? throw new ArgumentNullException(nameof(ocrImageParser));
+        }
+
+        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
             if (maxPages <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(maxPages));
             }
 
-            this.maxPages = maxPages;
-            this.ocrImageParser = ocrImageParser ?? throw new ArgumentNullException(nameof(ocrImageParser));
-            this.file = file ?? throw new ArgumentNullException(nameof(file));
-        }
-
-        public Task<RawDocument> Parse()
-        {
+            logger.LogDebug("Parsing [{0}]", file.FullName);
             var document = new RawDocument();
             using (var documentProcessor = new PdfDocumentProcessor())
             {
@@ -46,7 +49,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
                     using (var memory = new MemoryStream())
                     {
-                        documentProcessor.CreateTiff(memory, 1024, new []{i});
+                        documentProcessor.CreateTiff(memory, 1024 * 5, new []{i});
                         var data = memory.ToArray();
                         page.Blocks[0].Text = ocrImageParser.Parse(data);
                     }
@@ -55,7 +58,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                 }
             }
 
-            return Task.FromResult(document);
+            return Task.FromResult(new ParsingResult(document, ParsingType.OCR));
         }
     }
 }
