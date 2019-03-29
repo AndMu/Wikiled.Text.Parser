@@ -32,7 +32,13 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public async Task Parse()
         {
-            var result = await instance.Parse(file, 10).ConfigureAwait(false);
+            var resultTask = instance.Parse(file, 10);
+            if (await Task.WhenAny(resultTask, Task.Delay(TimeSpan.FromMinutes(4))).ConfigureAwait(false) == resultTask)
+            {
+                Assert.Fail("Timeout");
+            }
+
+            var result = await resultTask.ConfigureAwait(false);
             Assert.IsNotNull(result);
             Assert.AreEqual(10, result.Document.Pages.Length);
             Assert.AreEqual(56, result.Document.Pages[0].Blocks[0].Text.Length);
