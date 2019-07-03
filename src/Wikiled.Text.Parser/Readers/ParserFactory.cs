@@ -33,8 +33,7 @@ namespace Wikiled.Text.Parser.Readers
             {
                 return new DevExpressCombinedParser(
                     new DevExpressPdfParser(loggerFactory.CreateLogger<DevExpressPdfParser>()),
-                    new DevExpressPdfOcrParser(loggerFactory.CreateLogger<DevExpressPdfOcrParser>(),
-                                               new OcrImageParser()));
+                    new DevExpressPdfOcrParser(loggerFactory.CreateLogger<DevExpressPdfOcrParser>(), new OcrImageParser()));
             }
 
             if (string.Compare(file.Extension, ".doc", StringComparison.OrdinalIgnoreCase) == 0 ||

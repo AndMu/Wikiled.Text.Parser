@@ -25,7 +25,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
             Assert.Throws<ArgumentNullException>(() => new ParserFactory(null));
         }
 
-        [TestCase("HowTo.pdf", ParsingType.Extract, 5, 6004)]
+        [TestCase("HowTo.pdf", ParsingType.Extract, 5, 6133)]
         [TestCase("non.pdf", ParsingType.OCR, 10, 179)]
         [TestCase("phototest.bmp", ParsingType.OCR, 1, 287)]
         [TestCase("phototest.gif", ParsingType.OCR, 1, 287)]

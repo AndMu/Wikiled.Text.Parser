@@ -38,7 +38,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
             var result = await instance.Parse(fileHowTo, 10).ConfigureAwait(false);
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.Document.Pages.Length);
-            Assert.AreEqual(6004, result.Document.Pages[0].Blocks[0].Text.Length);
+            Assert.AreEqual(6133, result.Document.Pages[0].Blocks[0].Text.Length);
         }
 
         [Test]

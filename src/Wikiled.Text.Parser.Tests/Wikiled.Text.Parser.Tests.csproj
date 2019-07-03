@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.10.1" />
-    <PackageReference Include="NLog" version="4.5.11" />
-    <PackageReference Include="NUnit" version="3.11.0" />
-    <packagereference Include="Microsoft.NET.Test.Sdk" Version="16.0.1"></packagereference>
+    <PackageReference Include="Moq" Version="4.12.0" />
+    <PackageReference Include="NLog" version="4.6.5" />
+    <PackageReference Include="NUnit" version="3.12.0" />
+    <packagereference Include="Microsoft.NET.Test.Sdk" Version="16.2.0"></packagereference>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
     <packagereference Include="NUnit3TestAdapter" Version="3.13.0" />
-    <PackageReference Include="Wikiled.Text.Analysis" Version="1.7.11" />
+    <PackageReference Include="Wikiled.Text.Analysis" Version="1.7.16" />
     <PackageReference Include="Tesseract" Version="3.3.0" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
 ﻿using DevExpress.Pdf;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Wikiled.Text.Analysis.Structure.Raw;
 using Wikiled.Text.Parser.Data;
 using Wikiled.Text.Parser.Ocr;

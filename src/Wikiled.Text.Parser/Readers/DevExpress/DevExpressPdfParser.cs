@@ -44,7 +44,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                         Blocks = new[] { new TextBlockItem() }
                     };
 
-                    page.Blocks[0].Text = documentProcessor.GetPageText(i).Replace(Environment.NewLine, " ");
+                    page.Blocks[0].Text = documentProcessor.GetPageText(i);
                     if (!string.IsNullOrWhiteSpace(page.Blocks[0].Text))
                     {
                         containsText = true;
