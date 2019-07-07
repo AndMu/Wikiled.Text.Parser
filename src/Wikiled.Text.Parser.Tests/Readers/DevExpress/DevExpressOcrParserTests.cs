@@ -42,7 +42,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
             Assert.AreEqual(ParsingType.OCR, result.ProcessedAs);
             Assert.AreEqual(10, result.Document.Pages.Length);
             Assert.Greater(result.Document.Pages[0].Blocks[0].Text.Length, 10);
-            Assert.AreEqual(19317, result.Document.Build().Length);
+            Assert.Greater(result.Document.Build().Length, 19000);
         }
 
         private DevExpressPdfOcrParser CreateDevExpressOcrParser()
