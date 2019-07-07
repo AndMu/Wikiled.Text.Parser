@@ -22,7 +22,7 @@ namespace Wikiled.Text.Parser.Ocr
         public IEnumerable<TextBlockItem> Parse(byte[] data)
         {
             var language = "eng";
-            logger.LogDebug("Constructing {0} {1}", logger, language);
+            logger.LogDebug("Constructing {0} {1}", location, language);
             using (var engine = new TesseractEngine(location, language, EngineMode.Default))
             using (var pix = Pix.LoadTiffFromMemory(data))
             using (var page = engine.Process(pix))
