@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Wikiled.Text.Parser.Data;
+using Wikiled.Text.Parser.Ocr;
 using Wikiled.Text.Parser.Readers;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -16,13 +17,14 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [SetUp]
         public void Setup()
         {
-            instance = new ParserFactory(new NullLoggerFactory());
+            instance = new ParserFactory(new NullLoggerFactory(), new OcrImageParser());
         }
 
         [Test]
         public void Construct()
         {
-            Assert.Throws<ArgumentNullException>(() => new ParserFactory(null));
+            Assert.Throws<ArgumentNullException>(() => new ParserFactory(null, new OcrImageParser()));
+            Assert.Throws<ArgumentNullException>(() => new ParserFactory(NullLoggerFactory.Instance, null));
         }
 
         [Test]

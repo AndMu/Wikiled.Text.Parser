@@ -13,10 +13,13 @@ namespace Wikiled.Text.Parser.Readers
 
         private readonly ILogger<ParserFactory> logger;
 
-        public ParserFactory(ILoggerFactory loggerFactory)
+        private readonly IOcrImageParser ocrParser;
+
+        public ParserFactory(ILoggerFactory loggerFactory, IOcrImageParser ocrParser)
         {
             logger = loggerFactory.CreateLogger < ParserFactory>();
             this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            this.ocrParser = ocrParser ?? throw new ArgumentNullException(nameof(ocrParser));
         }
 
         public string [] Supported { get; } = { "pdf", "doc", "docx", "rtf", "txt", "tif", "png", "jpg", "bmp", "gif" };
@@ -33,7 +36,7 @@ namespace Wikiled.Text.Parser.Readers
             {
                 return new CombinedParser(
                     new DevExpressPdfParser(loggerFactory.CreateLogger<DevExpressPdfParser>()),
-                    new DevExpressPdfOcrParser(loggerFactory.CreateLogger<DevExpressPdfOcrParser>(), new OcrImageParser()));
+                    new DevExpressPdfOcrParser(loggerFactory.CreateLogger<DevExpressPdfOcrParser>(), ocrParser));
             }
 
             if (string.Compare(file.Extension, ".doc", StringComparison.OrdinalIgnoreCase) == 0 ||
@@ -50,7 +53,7 @@ namespace Wikiled.Text.Parser.Readers
                 string.Compare(file.Extension, ".jpg", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(file.Extension, ".bmp", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                return new ImageTextParser(loggerFactory.CreateLogger<ImageTextParser>(), new OcrImageParser());
+                return new ImageTextParser(loggerFactory.CreateLogger<ImageTextParser>(), ocrParser);
             }
 
             return NullTextParser.Instance;

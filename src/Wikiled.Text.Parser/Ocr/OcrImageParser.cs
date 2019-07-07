@@ -8,9 +8,16 @@ namespace Wikiled.Text.Parser.Ocr
 {
     public class OcrImageParser : IOcrImageParser
     {
+        private readonly string location;
+
+        public OcrImageParser(string location = @"./tessdata")
+        {
+            this.location = location ?? throw new ArgumentNullException(nameof(location));
+        }
+
         public IEnumerable<TextBlockItem> Parse(byte[] data)
         {
-            using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
+            using (var engine = new TesseractEngine(location, "eng", EngineMode.Default))
             using (var pix = Pix.LoadTiffFromMemory(data))
             using (var page = engine.Process(pix))
             using (var iter = page.GetIterator())
