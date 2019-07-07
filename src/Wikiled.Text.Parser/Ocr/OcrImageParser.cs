@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Tesseract;
 using Wikiled.Text.Analysis.Structure.Raw;
 
@@ -8,16 +9,21 @@ namespace Wikiled.Text.Parser.Ocr
 {
     public class OcrImageParser : IOcrImageParser
     {
+        private readonly ILogger<OcrImageParser> logger;
+
         private readonly string location;
 
-        public OcrImageParser(string location = @"./tessdata")
+        public OcrImageParser(ILogger<OcrImageParser> logger, string location = @"./tessdata")
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.location = location ?? throw new ArgumentNullException(nameof(location));
         }
 
         public IEnumerable<TextBlockItem> Parse(byte[] data)
         {
-            using (var engine = new TesseractEngine(location, "eng", EngineMode.Default))
+            var language = "eng";
+            logger.LogDebug("Constructing {0} {1}", logger, language);
+            using (var engine = new TesseractEngine(location, language, EngineMode.Default))
             using (var pix = Pix.LoadTiffFromMemory(data))
             using (var page = engine.Process(pix))
             using (var iter = page.GetIterator())

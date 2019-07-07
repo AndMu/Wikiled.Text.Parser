@@ -17,13 +17,13 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [SetUp]
         public void Setup()
         {
-            instance = new ParserFactory(new NullLoggerFactory(), new OcrImageParser());
+            instance = new ParserFactory(new NullLoggerFactory(), new OcrImageParser(NullLogger< OcrImageParser>.Instance));
         }
 
         [Test]
         public void Construct()
         {
-            Assert.Throws<ArgumentNullException>(() => new ParserFactory(null, new OcrImageParser()));
+            Assert.Throws<ArgumentNullException>(() => new ParserFactory(null, new OcrImageParser(NullLogger<OcrImageParser>.Instance)));
             Assert.Throws<ArgumentNullException>(() => new ParserFactory(NullLoggerFactory.Instance, null));
         }
 

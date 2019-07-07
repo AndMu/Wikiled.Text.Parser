@@ -1,5 +1,4 @@
 using System;
-using Moq;
 using NUnit.Framework;
 using System.IO;
 using System.Threading.Tasks;
@@ -23,7 +22,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [SetUp]
         public void SetUp()
         {
-            ocrImageParser = new OcrImageParser();
+            ocrImageParser = new OcrImageParser(NullLogger<OcrImageParser>.Instance);
             fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "data", "non.pdf"));
             instance = CreateDevExpressOcrParser();
         }
