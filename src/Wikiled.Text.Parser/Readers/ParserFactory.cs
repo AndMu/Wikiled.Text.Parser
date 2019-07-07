@@ -31,7 +31,7 @@ namespace Wikiled.Text.Parser.Readers
 
             if (string.Compare(file.Extension, ".pdf", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                return new DevExpressCombinedParser(
+                return new CombinedParser(
                     new DevExpressPdfParser(loggerFactory.CreateLogger<DevExpressPdfParser>()),
                     new DevExpressPdfOcrParser(loggerFactory.CreateLogger<DevExpressPdfOcrParser>(), new OcrImageParser()));
             }

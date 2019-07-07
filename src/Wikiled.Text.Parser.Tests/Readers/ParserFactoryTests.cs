@@ -25,24 +25,30 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
             Assert.Throws<ArgumentNullException>(() => new ParserFactory(null));
         }
 
-        [TestCase("HowTo.pdf", ParsingType.Extract, 5, 6133)]
-        [TestCase("non.pdf", ParsingType.OCR, 10, 179)]
-        [TestCase("phototest.bmp", ParsingType.OCR, 1, 287)]
-        [TestCase("phototest.gif", ParsingType.OCR, 1, 287)]
-        [TestCase("phototest.jpg", ParsingType.OCR, 1, 287)]
-        [TestCase("phototest.png", ParsingType.OCR, 1, 287)]
-        [TestCase("phototest.tif", ParsingType.OCR, 1, 287)]
-        [TestCase("dbs.doc", ParsingType.Extract, 10, 56)]
-        public async Task ConstructParsers(string fileName, ParsingType type, int pages, int textLength)
+        [Test]
+        public void Arguments()
+        {
+            Assert.Throws<ArgumentNullException>(() => instance.ConstructParsers(null));
+        }
+
+        [TestCase("HowTo.pdf", ParsingType.Any, ParsingType.Extract, 5, 6133)]
+        [TestCase("HowTo.pdf", ParsingType.OCR, ParsingType.OCR, 5, 2362)]
+        [TestCase("non.pdf", ParsingType.Any, ParsingType.OCR, 10, 213)]
+        [TestCase("phototest.bmp", ParsingType.Any, ParsingType.OCR, 1, 307)]
+        [TestCase("phototest.gif", ParsingType.Any, ParsingType.OCR, 1, 307)]
+        [TestCase("phototest.jpg", ParsingType.Any, ParsingType.OCR, 1, 307)]
+        [TestCase("phototest.png", ParsingType.Any, ParsingType.OCR, 1, 307)]
+        [TestCase("phototest.tif", ParsingType.Any, ParsingType.OCR, 1, 307)]
+        [TestCase("dbs.doc", ParsingType.Any, ParsingType.Extract, 10, 1855)]
+        public async Task ConstructParsers(string fileName, ParsingType requesting, ParsingType type, int pages, int textLength)
         {
             var file = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, $@".\Data\{fileName}"));
-            Assert.Throws<ArgumentNullException>(() => instance.ConstructParsers(null));
             var parser = instance.ConstructParsers(file);
             Assert.IsNotNull(parser);
-            var result = await parser.Parse(file, 10).ConfigureAwait(false);
-            Assert.AreEqual(type, result.Type);
+            var result = await parser.Parse(new ParsingRequest(file, requesting,10)).ConfigureAwait(false);
+            Assert.AreEqual(type, result.ProcessedAs);
             Assert.AreEqual(pages, result.Document.Pages.Length);
-            Assert.AreEqual(textLength, result.Document.Pages[0].Blocks[0].Text.Length);
+            Assert.AreEqual(textLength, result.Document.Pages[0].Build().Length);
         }
     }
 }

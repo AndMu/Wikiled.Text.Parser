@@ -1,7 +1,9 @@
 ﻿using DevExpress.Pdf;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikiled.Text.Analysis.Structure.Raw;
 using Wikiled.Text.Parser.Data;
@@ -21,44 +23,39 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             this.ocrImageParser = ocrImageParser ?? throw new ArgumentNullException(nameof(ocrImageParser));
         }
 
-        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        public ParsingType Type => ParsingType.OCR;
+
+        public Task<ParsingResult> Parse(ParsingRequest request)
         {
-            if (file == null)
+            if (request == null)
             {
-                throw new ArgumentNullException(nameof(file));
+                throw new ArgumentNullException(nameof(request));
             }
 
-            if (maxPages <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxPages));
-            }
-
-            logger.LogDebug("Parsing [{0}]", file.FullName);
+            logger.LogDebug("Parsing [{0}]", request.File.FullName);
             var document = new RawDocument();
             using (var documentProcessor = new PdfDocumentProcessor())
             {
-                documentProcessor.LoadDocument(file.FullName);
-                var pages = maxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : maxPages;
+                documentProcessor.LoadDocument(request.File.FullName);
+                var pages = request.MaxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : request.MaxPages;
+                var pagesList = new List<RawPage>();
                 document.Pages = new RawPage[pages];
                 for (var i = 1; i <= pages; i++)
                 {
-                    var page = new RawPage
-                               {
-                                   Blocks = new[] { new TextBlockItem() }
-                               };
+                    var page = new RawPage();
 
                     using (var memory = new MemoryStream())
                     {
                         documentProcessor.CreateTiff(memory, 1024 * 5, new []{i});
                         var data = memory.ToArray();
-                        page.Blocks[0].Text = ocrImageParser.Parse(data);
+                        page.Blocks = ocrImageParser.Parse(data).ToArray();
                     }
 
                     document.Pages[i - 1] = page;
                 }
             }
 
-            return Task.FromResult(new ParsingResult(document, ParsingType.OCR));
+            return Task.FromResult(new ParsingResult(document, request, ParsingType.OCR));
         }
     }
 }

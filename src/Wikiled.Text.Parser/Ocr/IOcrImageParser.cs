@@ -1,7 +1,10 @@
-﻿namespace Wikiled.Text.Parser.Ocr
+﻿using System.Collections.Generic;
+using Wikiled.Text.Analysis.Structure.Raw;
+
+namespace Wikiled.Text.Parser.Ocr
 {
     public interface IOcrImageParser
     {
-        string Parse(byte[] data);
+        IEnumerable<TextBlockItem> Parse(byte[] data);
     }
 }

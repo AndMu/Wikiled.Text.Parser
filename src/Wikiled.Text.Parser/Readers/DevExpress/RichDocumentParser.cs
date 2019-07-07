@@ -1,12 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using DevExpress.XtraRichEdit;
+﻿using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Layout;
 using DevExpress.XtraRichEdit.API.Native;
 using Microsoft.Extensions.Logging;
-using Wikiled.Text.Analysis.Structure.Raw;
+using System;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Wikiled.Text.Parser.Data;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
@@ -20,19 +18,16 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        public ParsingType Type => ParsingType.Extract;
+
+        public async Task<ParsingResult> Parse(ParsingRequest request)
         {
-            if (file == null)
+            if (request == null)
             {
-                throw new ArgumentNullException(nameof(file));
+                throw new ArgumentNullException(nameof(request));
             }
 
-            if (maxPages <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxPages));
-            }
-
-            logger.LogDebug("Parsing [{0}]", file.FullName);
+            logger.LogDebug("Parsing [{0}]", request.File.FullName);
             using (var documentProcessor = new RichEditDocumentServer())
             {
                 documentProcessor.LayoutCalculationMode = CalculationModeType.Automatic;
@@ -43,7 +38,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                     .FirstOrDefaultAsync()
                     .GetAwaiter();
 
-                documentProcessor.LoadDocument(file.FullName);
+                documentProcessor.LoadDocument(request.File.FullName);
                 await loaded;
                 
                 var iterator = new DocumentIterator(documentProcessor.Document);
@@ -61,7 +56,7 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                     iterator.Current.Accept(visitor);
                 }
 
-                return new ParsingResult(visitor.GenerateResult(maxPages), ParsingType.Extract);
+                return new ParsingResult(visitor.GenerateResult(request.MaxPages), request, ParsingType.Extract);
             }
         }
     }

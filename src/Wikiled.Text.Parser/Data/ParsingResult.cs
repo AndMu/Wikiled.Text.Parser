@@ -1,20 +1,29 @@
-﻿using Wikiled.Text.Analysis.Structure.Raw;
+﻿using System;
+using Wikiled.Text.Analysis.Structure.Raw;
+using Wikiled.Text.Parser.Readers;
 
 namespace Wikiled.Text.Parser.Data
 {
     public class ParsingResult
     {
-        public static readonly ParsingResult Error =
-            new ParsingResult(new RawDocument { Pages = new RawPage[0] }, ParsingType.Failed);
-
-        public ParsingResult(RawDocument document, ParsingType type)
+        public ParsingResult(RawDocument document, ParsingRequest request, ParsingType? processedAs)
         {
-            Document = document;
-            Type = type;
+            Document = document ?? throw new ArgumentNullException(nameof(document));
+            Request = request ?? throw new ArgumentNullException(nameof(request));
+            ProcessedAs = processedAs;
         }
 
         public RawDocument Document { get; }
 
-        public ParsingType Type { get; }
+        public ParsingRequest Request { get; }
+
+        public ParsingType? ProcessedAs { get; }
+
+        public bool Succeeded => ProcessedAs != null;
+
+        public static ParsingResult ConstructError(ParsingRequest request)
+        {
+            return new ParsingResult(new RawDocument {Pages = new RawPage[0]}, request, null);
+        }
     }
 }

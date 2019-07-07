@@ -10,14 +10,13 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
         private NullTextParser()
         {}
 
+        public ParsingType Type => ParsingType.Any;
+
         public static NullTextParser Instance { get; } = new NullTextParser();
 
-        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        public Task<ParsingResult> Parse(ParsingRequest request)
         {
-            return Task.FromResult(
-                new ParsingResult(
-                    new RawDocument { Pages = new RawPage[0] },
-                    ParsingType.Failed));
+            return Task.FromResult(ParsingResult.ConstructError(request));
         }
     }
 }

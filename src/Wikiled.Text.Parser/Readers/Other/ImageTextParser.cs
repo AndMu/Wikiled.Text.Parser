@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikiled.Text.Analysis.Structure.Raw;
 using Wikiled.Text.Parser.Data;
@@ -22,34 +23,25 @@ namespace Wikiled.Text.Parser.Readers.Other
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        public ParsingType Type => ParsingType.Any;
+
+        public Task<ParsingResult> Parse(ParsingRequest request)
         {
-            if (file == null)
+            if (request == null)
             {
-                throw new ArgumentNullException(nameof(file));
+                throw new ArgumentNullException(nameof(request));
             }
 
-            if (maxPages <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxPages));
-            }
-
-            logger.LogDebug("Parsing [{0}]", file.FullName);
-            var sourceImage = Image.FromFile(file.FullName);
+            logger.LogDebug("Parsing [{0}]", request.File.FullName);
+            var sourceImage = Image.FromFile(request.File.FullName);
             using (var byteStream = new MemoryStream())
             {
                 sourceImage.Save(byteStream, ImageFormat.Tiff);
                 var data = byteStream.ToArray();
-                var text = ocrImageParser.Parse(data);
                 var document = new RawDocument();
-                document.Pages = new RawPage[1];
-                document.Pages[0] = new RawPage
-                {
-                    Blocks = new[] { new TextBlockItem() }
-                };
-
-                document.Pages[0].Blocks[0].Text = text;
-                return Task.FromResult(new ParsingResult(document, ParsingType.OCR));
+                document.Pages = new[] {new RawPage()};
+                document.Pages[0].Blocks = ocrImageParser.Parse(data).Take(request.MaxPages).ToArray();
+                return Task.FromResult(new ParsingResult(document, request, ParsingType.OCR));
             }
         }
     }

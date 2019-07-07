@@ -17,25 +17,22 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task<ParsingResult> Parse(FileInfo file, int maxPages)
+        public ParsingType Type => ParsingType.Extract;
+
+        public Task<ParsingResult> Parse(ParsingRequest request)
         {
-            if (file == null)
+            if (request == null)
             {
-                throw new ArgumentNullException(nameof(file));
+                throw new ArgumentNullException(nameof(request));
             }
 
-            if (maxPages <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxPages));
-            }
-
-            logger.LogDebug("Parsing [{0}]", file.FullName);
+            logger.LogDebug("Parsing [{0}]", request.File.FullName);
             var document = new RawDocument();
             bool containsText = false;
             using (var documentProcessor = new PdfDocumentProcessor())
             {
-                documentProcessor.LoadDocument(file.FullName);
-                var pages = maxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : maxPages;
+                documentProcessor.LoadDocument(request.File.FullName);
+                var pages = request.MaxPages > documentProcessor.Document.Pages.Count ? documentProcessor.Document.Pages.Count : request.MaxPages;
                 document.Pages = new RawPage[pages];
                 for (var i = 1; i <= pages; i++)
                 {
@@ -56,11 +53,11 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
             if (!containsText)
             {
-                logger.LogInformation("Failed to find text in: [{0}]", file.FullName);
-                return Task.FromResult(ParsingResult.Error);
+                logger.LogInformation("Failed to find text in: [{0}]", request.File.FullName);
+                return Task.FromResult(ParsingResult.ConstructError(request));
             }
 
-            return Task.FromResult(new ParsingResult(document, ParsingType.Extract));
+            return Task.FromResult(new ParsingResult(document, request, ParsingType.Extract));
         }
     }
 }

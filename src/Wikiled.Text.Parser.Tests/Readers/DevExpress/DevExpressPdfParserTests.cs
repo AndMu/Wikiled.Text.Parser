@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Wikiled.Text.Parser.Data;
+using Wikiled.Text.Parser.Readers;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -35,7 +36,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public async Task Parse()
         {
-            var result = await instance.Parse(fileHowTo, 10).ConfigureAwait(false);
+            var result = await instance.Parse(new ParsingRequest(fileHowTo, ParsingType.OCR, 10)).ConfigureAwait(false);
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.Document.Pages.Length);
             Assert.AreEqual(6133, result.Document.Pages[0].Blocks[0].Text.Length);
@@ -44,10 +45,10 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public async Task ParseUnreadable()
         {
-            var result = await instance.Parse(fileOcr, 10).ConfigureAwait(false);
+            var result = await instance.Parse(new ParsingRequest(fileOcr, ParsingType.OCR, 10)).ConfigureAwait(false);
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Document.Pages.Length);
-            Assert.AreEqual(ParsingType.Failed, result.Type);
+            Assert.IsFalse(result.Succeeded);
         }
 
         private DevExpressPdfParser Create()

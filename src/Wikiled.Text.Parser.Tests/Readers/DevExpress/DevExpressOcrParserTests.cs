@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Wikiled.Text.Parser.Data;
 using Wikiled.Text.Parser.Ocr;
+using Wikiled.Text.Parser.Readers;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -37,10 +38,11 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test]
         public async Task Parse()
         {
-            var result = await instance.Parse(fileInfo, 10).ConfigureAwait(false);
-            Assert.AreEqual(ParsingType.OCR, result.Type);
+            var result = await instance.Parse(new ParsingRequest(fileInfo, ParsingType.OCR, 10)).ConfigureAwait(false);
+            Assert.AreEqual(ParsingType.OCR, result.ProcessedAs);
             Assert.AreEqual(10, result.Document.Pages.Length);
             Assert.Greater(result.Document.Pages[0].Blocks[0].Text.Length, 10);
+            Assert.AreEqual(19317, result.Document.Build().Length);
         }
 
         private DevExpressPdfOcrParser CreateDevExpressOcrParser()

@@ -1,10 +1,10 @@
-using System;
-using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Wikiled.Text.Parser.Data;
+using Wikiled.Text.Parser.Readers;
 using Wikiled.Text.Parser.Readers.DevExpress;
 
 namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
@@ -32,7 +32,7 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         [Test, Ignore("Temporary")]
         public async Task Parse()
         {
-            var resultTask = instance.Parse(file, 10);
+            var resultTask = instance.Parse(new ParsingRequest(file, ParsingType.Any, 10));
             if (await Task.WhenAny(resultTask, Task.Delay(TimeSpan.FromMinutes(4))).ConfigureAwait(false) != resultTask)
             {
                 Assert.Fail("Timeout");

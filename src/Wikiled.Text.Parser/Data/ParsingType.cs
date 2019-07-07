@@ -4,6 +4,6 @@
     {
         Extract,
         OCR,
-        Failed
+        Any
     }
 }
