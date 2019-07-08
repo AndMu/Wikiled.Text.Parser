@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using Wikiled.Text.Parser.Data;
 
-namespace Wikiled.Text.Parser.Readers
+namespace Wikiled.Text.Parser.Data
 {
     public class ParsingRequest
     {

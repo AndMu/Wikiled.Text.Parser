@@ -1,6 +1,5 @@
 ﻿using System;
 using Wikiled.Text.Analysis.Structure.Raw;
-using Wikiled.Text.Parser.Readers;
 
 namespace Wikiled.Text.Parser.Data
 {
