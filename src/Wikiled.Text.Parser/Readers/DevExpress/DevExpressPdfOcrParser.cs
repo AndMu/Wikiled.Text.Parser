@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,9 +48,21 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
 
                     using (var memory = new MemoryStream())
                     {
-                        documentProcessor.CreateTiff(memory, 1024 * 5, new []{i});
-                        var data = memory.ToArray();
-                        page.Blocks = ocrImageParser.Parse(data).ToArray();
+                        documentProcessor.CreateTiff(memory, 1024 * 5, new[] { i });
+#if DEBUG
+                        var image = Image.FromStream(memory);
+                        image.Save($"origingal_{request.File.Name}.jpeg", ImageFormat.Jpeg);
+#endif
+                        image = GetBlackAndWhiteImage(image);
+#if DEBUG
+                        image.Save($"BW_{request.File.Name}.jpeg", ImageFormat.Jpeg);
+                        using (var bwStream = new MemoryStream())
+                        {
+                            image.Save(bwStream, ImageFormat.Tiff);
+                            var data = bwStream.ToArray();
+                            page.Blocks = ocrImageParser.Parse(data).ToArray();
+                        }
+#endif
                     }
 
                     document.Pages[i - 1] = page;
@@ -56,6 +70,36 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             }
 
             return Task.FromResult(new ParsingResult(document, request, ParsingType.OCR));
+        }
+
+        public static Image GetBlackAndWhiteImage(Image img)
+        {
+
+            Bitmap bmp = new Bitmap(img.Width, img.Height);
+
+            var grayMatrix = new ColorMatrix(
+                new[]
+                {
+                    new float[] { 0.299f, 0.299f, 0.299f, 0, 0  },
+                    new float[] { 0.587f, 0.587f, 0.587f, 0, 0  },
+                    new float[] { 0.114f, 0.114f, 0.114f, 0, 0 },
+                    new float[] { 0, 0, 0, 1, 0 },
+                    new float[] { 0, 0, 0, 0, 1}
+                });
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                using (var ia = new ImageAttributes())
+                {
+
+                    ia.SetColorMatrix(grayMatrix);
+                    ia.SetThreshold(0.5f);
+                    g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
+                }
+            }
+
+            return bmp;
+
         }
     }
 }
