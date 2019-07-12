@@ -22,5 +22,7 @@ namespace Wikiled.Text.Parser.Data
         public ParsingType Type { get; }
 
         public int MaxPages { get; }
+
+        public float? BwThreshold { get; set; }
     }
 }

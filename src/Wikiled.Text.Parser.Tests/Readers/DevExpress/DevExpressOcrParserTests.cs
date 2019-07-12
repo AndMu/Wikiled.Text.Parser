@@ -48,11 +48,13 @@ namespace Wikiled.Text.Parser.Tests.Readers.DevExpress
         public async Task ParseAmazon()
         {
             fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "data", "AmazonWebServices.pdf"));
-            var result = await instance.Parse(new ParsingRequest(fileInfo, ParsingType.OCR, 10)).ConfigureAwait(false);
-            Assert.AreEqual(ParsingType.OCR, result.ProcessedAs);
-            Assert.AreEqual(1, result.Document.Pages.Length);
-            Assert.Greater(result.Document.Pages[0].Blocks[0].Text.Length, 100);
-            Assert.Greater(result.Document.Build().Length, 1000);
+            var request = new ParsingRequest(fileInfo, ParsingType.OCR, 10);
+            var result = await instance.Parse(request).ConfigureAwait(false);
+            request.BwThreshold = 0.8f;
+            var resultBw = await instance.Parse(request).ConfigureAwait(false);
+            var length = result.Document.Build().Length;
+            var lengthBw = resultBw.Document.Build().Length;
+            Assert.Greater(lengthBw, length);
         }
 
         private DevExpressPdfOcrParser CreateDevExpressOcrParser()

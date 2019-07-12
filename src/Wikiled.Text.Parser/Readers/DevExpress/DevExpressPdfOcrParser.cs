@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wikiled.Text.Analysis.Structure.Raw;
 using Wikiled.Text.Parser.Data;
+using Wikiled.Text.Parser.Helpers;
 using Wikiled.Text.Parser.Ocr;
 
 namespace Wikiled.Text.Parser.Readers.DevExpress
@@ -45,26 +46,8 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
                 for (var i = 1; i <= pages; i++)
                 {
                     var page = new RawPage();
-
-                    using (var memory = new MemoryStream())
-                    {
-                        documentProcessor.CreateTiff(memory, 1024 * 5, new[] { i });
-#if DEBUG
-                        var image = Image.FromStream(memory);
-                        image.Save($"origingal_{request.File.Name}.jpeg", ImageFormat.Jpeg);
-#endif
-                        image = GetBlackAndWhiteImage(image);
-#if DEBUG
-                        image.Save($"BW_{request.File.Name}.jpeg", ImageFormat.Jpeg);
-                        using (var bwStream = new MemoryStream())
-                        {
-                            image.Save(bwStream, ImageFormat.Tiff);
-                            var data = bwStream.ToArray();
-                            page.Blocks = ocrImageParser.Parse(data).ToArray();
-                        }
-#endif
-                    }
-
+                    var data = GetImage(request, documentProcessor, i);
+                    page.Blocks = ocrImageParser.Parse(data).ToArray(); 
                     document.Pages[i - 1] = page;
                 }
             }
@@ -72,34 +55,34 @@ namespace Wikiled.Text.Parser.Readers.DevExpress
             return Task.FromResult(new ParsingResult(document, request, ParsingType.OCR));
         }
 
-        public static Image GetBlackAndWhiteImage(Image img)
+        private byte[] GetImage(ParsingRequest request, PdfDocumentProcessor documentProcessor, int i)
         {
-
-            Bitmap bmp = new Bitmap(img.Width, img.Height);
-
-            var grayMatrix = new ColorMatrix(
-                new[]
-                {
-                    new float[] { 0.299f, 0.299f, 0.299f, 0, 0  },
-                    new float[] { 0.587f, 0.587f, 0.587f, 0, 0  },
-                    new float[] { 0.114f, 0.114f, 0.114f, 0, 0 },
-                    new float[] { 0, 0, 0, 1, 0 },
-                    new float[] { 0, 0, 0, 0, 1}
-                });
-
-            using (var g = Graphics.FromImage(bmp))
+            using (var memory = new MemoryStream())
             {
-                using (var ia = new ImageAttributes())
+                documentProcessor.CreateTiff(memory, 1024 * 5, new[] { i });
+                using (var image = Image.FromStream(memory))
                 {
+#if DEBUG
+                    image.Save($"{request.File.Name}.jpeg", ImageFormat.Jpeg);
+#endif
+                    if (request.BwThreshold == null)
+                    {
+                        return memory.ToArray();
+                    }
 
-                    ia.SetColorMatrix(grayMatrix);
-                    ia.SetThreshold(0.5f);
-                    g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, ia);
+                    using (var bwImage = image.GetBlackAndWhiteImage(request.BwThreshold.Value))
+                    {
+#if DEBUG
+                        bwImage.Save($"{request.File.Name}_BW.jpeg", ImageFormat.Jpeg);
+#endif
+                        using (var bwStream = new MemoryStream())
+                        {
+                            bwImage.Save(bwStream, ImageFormat.Tiff);
+                            return bwStream.ToArray();
+                        }
+                    }
                 }
             }
-
-            return bmp;
-
         }
     }
 }
